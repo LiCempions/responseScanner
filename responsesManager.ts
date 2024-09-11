@@ -1,3 +1,4 @@
+`use strict`;
 type responseCallback = (data:string) => void
 interface Response { "data"?: string, "callback"?: responseCallback }
 
