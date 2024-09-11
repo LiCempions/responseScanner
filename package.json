@@ -15,6 +15,10 @@
   "author": "LiCempions",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^22.5.4"
+    "@types/node": "^22.5.4",
+    "@types/uuid": "^10.0.0"
+  },
+  "dependencies": {
+    "uuid": "^10.0.0"
   }
 }
