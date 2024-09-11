@@ -1,9 +1,9 @@
 `use strict`;
-const fs = require("node:fs/promises")
-const rl = require("readline/promises")
-const UUIDlib = require("uuid")
-import { FileHandle } from "fs/promises";
+import fs from "node:fs/promises";
+import rl from "readline/promises";
+import { validate as UUIDvalidate } from "uuid";
 import { ResponsesManager } from "./responsesManager.js";
+import { PathLike } from "node:fs";
 
 type autoCallback = (data:string) => void;
 
@@ -12,8 +12,8 @@ export class ResponseScanner{
     #autoCallbacks: Object & { [k: string]: autoCallback };
     #abortController: AbortController;
     readonly abortScanner: Function;
-    #logPath: String;
-    #fh: FileHandle;
+    #logPath: String & PathLike;
+    #fh: fs.FileHandle;
     #readTo: number = 0;
 
     constructor () {
@@ -33,7 +33,7 @@ export class ResponseScanner{
 
     async #initScanner(){
         this.#logPath = await this.#getLatestLog();
-        this.#fh = fs.open(this.#logPath);
+        this.#fh = await fs.open(this.#logPath);
         await this.#fetchResponses();
         this.#watchLog();
     };
@@ -84,7 +84,7 @@ export class ResponseScanner{
             if (line.slice(8,28) != "[Scripting][inform]-") { continue }
 
             const uuid = line.slice(28,64)
-            if ( !UUIDlib.validate(uuid) ) { continue }
+            if ( !UUIDvalidate(uuid) ) { continue }
 
             if ( Object.keys(this.#autoCallbacks).includes(uuid) ) {
                 this.#autoCallbacks[uuid](line.slice(65))
@@ -100,7 +100,7 @@ export class ResponseScanner{
     };
 
     async #watchLog() {
-        const watcher = fs.watch(this.#logPath, {signal:this.#abortController});
+        const watcher = fs.watch(this.#logPath, {signal:this.#abortController.signal});
 
         for await (const event of watcher) {
             if (event.eventType == "change") {
