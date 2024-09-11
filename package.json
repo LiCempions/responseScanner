@@ -1,0 +1,18 @@
+{
+  "name": "responsescanner",
+  "version": "1.0.1",
+  "description": "Looks for responses in minecraft bedrock log files to be used in external scripts",
+  "main": "responseScanner.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "minecraft",
+    "minecraftlogs"
+  ],
+  "author": "LiCempions",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.5.4"
+  }
+}
