@@ -3,7 +3,7 @@ const fs = require("node:fs/promises")
 const rl = require("readline/promises")
 const UUIDlib = require("uuid")
 import { FileHandle } from "fs/promises";
-import { ResponsesManager } from "./responsesManager";
+import { ResponsesManager } from "./responsesManager.js";
 
 type autoCallback = (data:string) => void;
 
