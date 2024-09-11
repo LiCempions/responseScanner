@@ -1,7 +1,7 @@
 `use strict`;
-const fs = require("node:fs/promises");
-const rl = require("readline/promises");
-const UUIDlib = require("uuid");
+import fs from "node:fs/promises";
+import rl from "readline/promises";
+import { validate as UUIDvalidate } from "uuid";
 import { ResponsesManager } from "./responsesManager.js";
 export class ResponseScanner {
     rManager;
@@ -27,7 +27,7 @@ export class ResponseScanner {
     ;
     async #initScanner() {
         this.#logPath = await this.#getLatestLog();
-        this.#fh = fs.open(this.#logPath);
+        this.#fh = await fs.open(this.#logPath);
         await this.#fetchResponses();
         this.#watchLog();
     }
@@ -76,7 +76,7 @@ export class ResponseScanner {
                 continue;
             }
             const uuid = line.slice(28, 64);
-            if (!UUIDlib.validate(uuid)) {
+            if (!UUIDvalidate(uuid)) {
                 continue;
             }
             if (Object.keys(this.#autoCallbacks).includes(uuid)) {
@@ -92,7 +92,7 @@ export class ResponseScanner {
     }
     ;
     async #watchLog() {
-        const watcher = fs.watch(this.#logPath, { signal: this.#abortController });
+        const watcher = fs.watch(this.#logPath, { signal: this.#abortController.signal });
         for await (const event of watcher) {
             if (event.eventType == "change") {
                 await this.#fetchResponses();
