@@ -1,4 +1,5 @@
-interface Response { "data"?: string, "callback"?: Function }
+type responseCallback = (data:string) => void
+interface Response { "data"?: string, "callback"?: responseCallback }
 
 export class ResponsesManager {
     responses: { [k: string]: Response };
@@ -14,7 +15,7 @@ export class ResponsesManager {
             this.responses[resID].data = data;
         }
     }
-    setCallback(resID: string, callback: Function){
+    setCallback(resID: string, callback: responseCallback){
         if ( this.responses[resID].data != null ) {
 
             callback(this.responses[resID].data);
