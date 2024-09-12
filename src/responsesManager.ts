@@ -7,7 +7,7 @@ export class ResponsesManager {
     completed: string[] = [];
 
     setData(resID: string, data: string){
-        if ( this.responses[resID].callback != null ) {
+        if ( this.responses[resID].callback) {
             this.responses[resID].callback(data);
 
             this.completed.push(resID);
@@ -17,7 +17,7 @@ export class ResponsesManager {
         }
     }
     setCallback(resID: string, callback: responseCallback){
-        if ( this.responses[resID].data != null ) {
+        if ( this.responses[resID].data) {
 
             callback(this.responses[resID].data);
 
