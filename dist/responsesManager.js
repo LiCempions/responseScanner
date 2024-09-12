@@ -1,6 +1,6 @@
 `use strict`;
 export class ResponsesManager {
-    responses;
+    responses = {};
     completed = [];
     setData(resID, data) {
         if (this.responses[resID]) {
