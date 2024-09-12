@@ -3,7 +3,7 @@ type responseCallback = (data:string) => void
 interface Response { "data"?: string, "callback"?: responseCallback }
 
 export class ResponsesManager {
-    responses: { [k: string]: Response };
+    responses: { [k: string]: Response } = {};
     completed: string[] = [];
 
     setData(resID: string, data: string){
