@@ -80,18 +80,38 @@ export class ResponseScanner{
         const lineReader = rl.createInterface( {input: fStream} );
 
         for await (const line of lineReader) {
-            // line model: hh:mm:ss[Scripting][inform]-uuiduuid-uuid-uuid-uuid-uuiduuiduuid-data
+            // line model: hh:mm:ss[Scripting][inform]-scannerRequest response uuiduuid-uuid-uuid-uuid-uuiduuiduuid data
+            // line model: hh:mm:ss[Scripting][inform]-scannerRequest autoCallback autoCallbackId data
+
+            // 8-28 (28 excluded, as in slice()): [Scripting][inform]-
             if (line.slice(8,28) != "[Scripting][inform]-") { continue }
 
-            const uuid = line.slice(28,64)
-            if ( !UUIDvalidate(uuid) ) { continue }
+            if (line.slice(28, 42) != "scannerRequest") { continue }
 
-            if ( Object.keys(this.#autoCallbacks).includes(uuid) ) {
-                this.#autoCallbacks[uuid](line.slice(65))
-            } else {
-                this.rManager.setData(uuid, line.slice(65))
-            }
+            const request = line.slice(43).split(" ", 2)
+
+            switch ( request[0] ) { // response | autoCallback
+                case "response":
+                    if ( UUIDvalidate(request[1]) ) {
+                            this.rManager.setData(request[1], line.slice(89)) // slice(89): data
+                    } else {
+                        throw new Error(`Request to scanner was found, but uuid "${request[1]}" is not valid`);
+                    }
+                    break;
+
+                case "autoCallback":
+                    if ( Object.keys(this.#autoCallbacks).includes(request[1]) ) {
+                        this.#autoCallbacks[request[1]](line.slice(71)); // slice(71): data
+                    } else {
+                        throw new Error(`Request to scanner was found, but autoCallback "${request[1]}" was not defined`);
+                    }
+                    
+                    break;
             
+                default:
+                    throw new Error(`Request to scanner was found, but "${request[0]}" is not a valid request`);
+                    break;
+            }
         }
 
         this.#readTo = fStream.bytesRead;
@@ -104,19 +124,25 @@ export class ResponseScanner{
 
         for await (const event of watcher) {
             if (event.eventType == "change") {
-                await this.#fetchResponses();
-            } else {
-                await this.#fh.close();
                 try {
-                    this.#logPath = this.#logPath.slice(0, this.#logPath.lastIndexOf("/")+1) + event.filename.toString();
-                    this.#fh = await fs.open(this.#logPath)
+                    await this.#fetchResponses();
                 } catch (err) {
-                    this.#abortController.abort("Error was thrown while opening renamed file");
+                    this.#abortController.abort("Error was thrown while fetching log file");
+                    this.#fh.close();
                     throw err;
                 }
+            } else {
+                await this.#fh.close();
+                this.#abortController.abort("Log file was renamed");
+                throw new Error("Log file was renamed");
+
+                // try {
+                //     this.#logPath = this.#logPath.slice(0, this.#logPath.lastIndexOf("/")+1) + event.filename.toString();
+                //     this.#fh = await fs.open(this.#logPath)
+                // } catch (err) {
+                //     this.#abortController.abort("Error was thrown while opening renamed file");
+                //     throw err;
             }
         }
-    };
-
-
-}
+    }
+};
