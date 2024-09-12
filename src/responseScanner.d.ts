@@ -1,4 +1,4 @@
-import { ResponsesManager } from "responsesmanager";
+import { ResponsesManager } from "./responsesmanager";
 
 declare module "responsescanner" {
 
