@@ -84,9 +84,7 @@ export class ResponseScanner{
             // line model: hh:mm:ss[Scripting][inform]-scannerRequest autoCallback autoCallbackId data
 
             // 8-28 (28 excluded, as in slice()): [Scripting][inform]-
-            if (line.slice(8,28) != "[Scripting][inform]-") { continue }
-
-            if (line.slice(28, 42) != "scannerRequest") { continue }
+            if (line.slice(8,42) != "[Scripting][inform]-scannerRequest") { continue }
 
             const request = line.slice(43).split(" ", 2)
 
