@@ -9,7 +9,6 @@ export class ResponseScanner {
     #abortController;
     abortScanner;
     #logPath;
-    #fh;
     #readTo = 0;
     constructor() {
         this.rManager = new ResponsesManager();
@@ -27,7 +26,6 @@ export class ResponseScanner {
     ;
     async #initScanner() {
         this.#logPath = await this.#getLatestLog();
-        this.#fh = await fs.open(this.#logPath);
         await this.#fetchResponses();
         this.#watchLog();
     }
@@ -68,12 +66,12 @@ export class ResponseScanner {
     }
     ;
     async #fetchResponses() {
-        const fStream = this.#fh.createReadStream({ start: this.#readTo });
+        const fh = await fs.open(this.#logPath);
+        const fStream = fh.createReadStream({ start: this.#readTo });
         const lineReader = rl.createInterface({ input: fStream });
         for await (const line of lineReader) {
             // line model: hh:mm:ss[Scripting][inform]-scannerRequest response uuiduuid-uuid-uuid-uuid-uuiduuiduuid data
             // line model: hh:mm:ss[Scripting][inform]-scannerRequest autoCallback autoCallbackId data
-            // 8-28 (28 excluded, as in slice()): [Scripting][inform]-
             if (line.slice(8, 42) != "[Scripting][inform]-scannerRequest") {
                 continue;
             }
@@ -103,6 +101,7 @@ export class ResponseScanner {
         this.#readTo = fStream.bytesRead;
         lineReader.close();
         fStream.close();
+        fh.close();
     }
     ;
     async #watchLog() {
@@ -114,17 +113,14 @@ export class ResponseScanner {
                 }
                 catch (err) {
                     this.#abortController.abort("Error was thrown while fetching log file");
-                    this.#fh.close();
                     throw err;
                 }
             }
             else {
-                await this.#fh.close();
                 this.#abortController.abort("Log file was renamed");
                 throw new Error("Log file was renamed");
                 // try {
                 //     this.#logPath = this.#logPath.slice(0, this.#logPath.lastIndexOf("/")+1) + event.filename.toString();
-                //     this.#fh = await fs.open(this.#logPath)
                 // } catch (err) {
                 //     this.#abortController.abort("Error was thrown while opening renamed file");
                 //     throw err;

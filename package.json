@@ -1,6 +1,6 @@
 {
   "name": "responsescanner",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "Looks for responses in minecraft bedrock log files to be used in external scripts",
   "type": "module",
   "main": "dist/responseScanner.js",
