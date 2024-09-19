@@ -1,8 +1,8 @@
 {
   "name": "responsescanner",
-  "version": "2.1.0",
+  "version": "1.1.10",
   "description": "Looks for responses in minecraft bedrock log files to be used in external scripts",
-  "type": "commonjs",
+  "type": "module",
   "main": "dist/responseScanner.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,7 +15,7 @@
   "author": "LiCempions",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^22.5.5",
+    "@types/node": "^22.5.4",
     "@types/uuid": "^10.0.0"
   },
   "dependencies": {

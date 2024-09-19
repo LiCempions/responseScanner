@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ResponsesManager = void 0;
 `use strict`;
-class ResponsesManager {
+export class ResponsesManager {
     responses = {};
     completed = [];
     setData(resID, data) {
@@ -26,5 +23,4 @@ class ResponsesManager {
         }
     }
 }
-exports.ResponsesManager = ResponsesManager;
 //# sourceMappingURL=responsesManager.js.map
