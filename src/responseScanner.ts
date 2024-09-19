@@ -1,18 +1,18 @@
 `use strict`;
-const fs = require("node:fs/promises");
-const rl = require("readline/promises");
-const UUIDvalidate = require("uuid").validate;
-const ResponsesManager = require("./responsesManager.js")
-const PathLike = require("node:fs").PathLike
+import fs from "node:fs/promises";
+import rl from "readline/promises";
+import { validate as UUIDvalidate } from "uuid";
+import { ResponsesManager } from "./responsesManager.js";
+import { PathLike } from "node:fs";
 
 type autoCallback = (data:string) => void;
 
 export class ResponseScanner{
-    readonly rManager: typeof ResponsesManager;
+    readonly rManager: ResponsesManager;
     #autoCallbacks: Object & { [k: string]: autoCallback };
     #abortController: AbortController;
     readonly abortScanner: Function;
-    #logPath: String & typeof PathLike;
+    #logPath: String & PathLike;
     #readTo: number = 0;
 
     constructor () {
