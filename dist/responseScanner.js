@@ -1,9 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ResponseScanner = void 0;
 `use strict`;
-import fs from "node:fs/promises";
-import rl from "readline/promises";
-import { validate as UUIDvalidate } from "uuid";
-import { ResponsesManager } from "./responsesManager.js";
-export class ResponseScanner {
+const fs = require("node:fs/promises");
+const rl = require("readline/promises");
+const UUIDvalidate = require("uuid").validate;
+const ResponsesManager = require("./responsesManager.js");
+const PathLike = require("node:fs").PathLike;
+class ResponseScanner {
     rManager;
     #autoCallbacks;
     #abortController;
@@ -128,5 +132,6 @@ export class ResponseScanner {
         }
     }
 }
+exports.ResponseScanner = ResponseScanner;
 ;
 //# sourceMappingURL=responseScanner.js.map
